@@ -5,19 +5,31 @@ body {
   color: black;
   font-family: tahoma;
 }
-hp1 {
+h1 {
   font-size: 50px;
+  position: relative;
+  top: 200px;
 }
 p {
   font-size: 22px;
+  position: relative;
+  top: 220px;
+}
+a {
+  font-size: 20px;
+  position: relative;
+  top: 350px; 
 }
 input {
   border: 0;
   padding: 10px;
   font-size: 18px;
+  position: relative;
+  top: 350px;
 }
-input[type="submit"] {
-  background: red;
-  color: white;
+button {
+  font-size: 18px;
+  position: relative;
+  top: 350px;
 }
 	
