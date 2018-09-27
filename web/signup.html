@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="he">
+	<head>
+	  <meta charset="utf-8"/>
+	  <title>סיכומאניה</title>
+	  <link rel="stylesheet" href="styles.css">
+	</head>
+	<body background="notebook.jpg" dir="rtl">
+		<h1>ברוכים הבאים לסיכומאניה!</h1>
+		<!--<form action="/echo" method="post">-->
+		<div id="div1">
+			<input type="text" id="firstname" placeholder="שם פרטי" />
+	        <input type="text" id="lastname" placeholder="שם משפחה" />
+			<input type="email" id="email" placeholder="דואר אלקטרוני" />
+			<input type="password" id="password" placeholder="סיסמה" />
+			<input type="text" id="class" placeholder="כיתה" />
+			<input type="button" id="submitter" value="הרשם">
+		<!--</form>-->
+		</div>
+	  <script src="jquery-3.3.1.min.js"></script>
+	  <script>
+		$("#submitter").click(function(){
+			$.ajax({
+			url: "/echo",
+			data: { fname: $("#firstname").val(),
+							lname: $("#lastname").val(),
+			 				email: $("#email").val(),
+							password: $("#password").val(), 
+							cls: $("#class").val() },
+			success: function(result){
+				$("#div1").html(result);
+			},
+			error: function(){
+				alert("mooo");
+			}
+			});
+		});
+	  </script>
+	  <script src="myscript.js"></script>
+	</body>
+</html>

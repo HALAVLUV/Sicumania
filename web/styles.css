@@ -1,0 +1,37 @@
+body {
+  text-align: center;
+  background-size: cover;
+  background-position: center;
+  color: black;
+  font-family: tahoma;
+}
+h1 {
+  font-size: 50px;
+  position: relative;
+  top: 200px;
+}
+p {
+  font-size: 22px;
+  position: relative;
+  top: 220px;
+}
+a {
+  font-size: 20px;
+  position: relative;
+  top: 350px; 
+}
+input {
+  border: 0;
+  padding: 10px;
+  font-size: 18px;
+}
+button {
+  font-size: 18px;
+  position: relative;
+  top: 350px;
+}
+	
+#div1 {
+	position: relative;
+	top: 350px;
+}
