@@ -1,0 +1,23 @@
+body {
+  text-align: center;
+  background-size: cover;
+  background-position: center;
+  color: black;
+  font-family: tahoma;
+}
+hp1 {
+  font-size: 50px;
+}
+p {
+  font-size: 22px;
+}
+input {
+  border: 0;
+  padding: 10px;
+  font-size: 18px;
+}
+input[type="submit"] {
+  background: red;
+  color: white;
+}
+	
