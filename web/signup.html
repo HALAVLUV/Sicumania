@@ -7,13 +7,35 @@
 	</head>
 	<body background="notebook.jpg" dir="rtl">
 		<h1>ברוכים הבאים לסיכומאניה!</h1>
-		<p>id="p"</p>
-	  <input type="firstname" placeholder="שם פרטי" id="fname">
-	  <input type="lastname" placeholder="שם משפחה" id="lname">
-	  <input type="email" placeholder="דואר אלקטרוני" id="mail">
-	  <input type="password" placeholder="סיסמה" id="pswrd">
-	  <input type="class" placeholder="כיתה" id="cls">
-	  <button type="button" onclick= submitSignUp()>הרשם</button>
+		<!--<form action="/echo" method="post">-->
+		<div id="div1">
+			<input type="text" id="firstname" placeholder="שם פרטי" />
+	        <input type="text" id="lastname" placeholder="שם משפחה" />
+			<input type="email" id="email" placeholder="דואר אלקטרוני" />
+			<input type="password" id="password" placeholder="סיסמה" />
+			<input type="text" id="class" placeholder="כיתה" />
+			<input type="button" id="submitter" value="הרשם">
+		<!--</form>-->
+		</div>
+	  <script src="jquery-3.3.1.min.js"></script>
+	  <script>
+		$("#submitter").click(function(){
+			$.ajax({
+			url: "/echo",
+			data: { fname: $("#firstname").val(),
+							lname: $("#lastname").val(),
+			 				email: $("#email").val(),
+							password: $("#password").val(), 
+							cls: $("#class").val() },
+			success: function(result){
+				$("#div1").html(result);
+			},
+			error: function(){
+				alert("mooo");
+			}
+			});
+		});
+	  </script>
 	  <script src="myscript.js"></script>
 	</body>
 </html>

@@ -6,10 +6,28 @@
 	  <link rel="stylesheet" href="styles.css">
 	</head>
 	<body background="notebook.jpg" dir="rtl">
-	  <h1>התחברות</h1>
-	  <input type="email" placeholder="דואר אלקטרוני" id="mail">
-	  <input type="password" placeholder="סיסמה" id="pswrd">
-	  <button type="button" onclick= submitSignIn()>התחבר</button>
+		<h1>התחברות</h1>
+		<div id="div1">
+			<input type="text" id="email" placeholder="דואר אלקטרוני">
+			<input type="password" id="password" placeholder="סיסמה">
+			<input type="button" value="התחבר">
+		</div>
+	  <script src="jquery-3.3.1.min.js"></script>
+	  <script>
+		$("#submitter").click(function(){
+			$.ajax({
+			url: "/echo",
+			data: {	email: $("#email").val(),
+							password: $("#password").val()},
+			success: function(result){
+				$("#div1").html(result);
+			},
+			error: function(){
+				alert("mooo");
+			}
+			});
+		});
+	  </script>
 	  <script src="myscript.js"></script>
 	</body>
 </html>
