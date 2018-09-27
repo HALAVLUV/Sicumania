@@ -24,6 +24,8 @@ input {
   border: 0;
   padding: 10px;
   font-size: 18px;
+  position: relative;
+  top: 350px;
 }
 button {
   font-size: 18px;
@@ -31,7 +33,3 @@ button {
   top: 350px;
 }
 	
-#div1 {
-	position: relative;
-	top: 350px;
-}
