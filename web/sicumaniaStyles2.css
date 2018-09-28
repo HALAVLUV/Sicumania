@@ -1,0 +1,39 @@
+h1 {
+    font-size: 50px;
+    position: relative;
+}
+
+body {
+    text-align: center;
+    background-size: cover;
+    background-position: center;
+    color: black;
+    font-family: tahoma;
+}
+
+p {
+    font-size: 22px;
+    position: relative;
+}
+
+input {
+    border: 0;
+    padding: 10px;
+    font-size: 18px;
+}
+
+button {
+    font-size: 18px;
+    position: relative;
+    
+}
+
+tr, th {
+    padding: 20px;
+    border: 2px solid black;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}

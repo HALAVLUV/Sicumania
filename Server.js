@@ -3,24 +3,83 @@ var fs = require('fs');
 var url = require('url');
 var path = require('path');
 var qs = require('querystring');
-var MongoClient = require('mongodb').MongoClient;
+var mongoose = require('mongoose');
+
+var Schema = mongoose.Schema;
+
+var usersSchema = new Schema({
+  email: String,
+  password:   String,
+  firstname: String,
+  lastname: String,
+  classs: String,
+  isAdmin: Boolean,
+  isLoggedIn: Boolean
+});
+
+var sicumsSchema = new Schema({
+    topic: String,
+    name:   String,
+    allowedList: String,
+    adminList: String,
+  });
 
 var counterUser = 0;
 var counterSicums = 0;
 
 
-var mongoUrl = "mongodb://localhost:27017/";
-MongoClient.connect(url, function(err, db) {
-if (err) throw err;
-var dbo = db.db("sicumania");
-dbo.createCollection("users");
-dbo.createCollection("sicums");
-db.close();
-});
-
-function queryDB(query)
+function writeSicums(content, topic, name) 
 {
-    
+    fs.writeFile(topic + name, content, (err) => {  
+        if (err) throw err;
+    });
+}
+
+
+function retSicum(topic, name, allowedList, adminList)
+{
+    mongoose.connect("mongodb://localhost");
+    var db = mongoose.connection;
+    db.on('error', console.error.bind(console, 'connection error:'));
+    db.once('open', function() 
+    {
+        var sicum = mongoose.model('sicum', sicumsSchema);
+    });
+        return sicum.find();
+}
+
+
+function registerNewUser(email, password, firstname, lastname, classs)
+{
+    mongoose.connect("mongodb://localhost");
+    var db = mongoose.connection;
+    db.on('error', console.error.bind(console, 'connection error:'));
+    db.once('open', function() 
+    {
+        var user = mongoose.model('user', usersSchema);
+        var newUser = new user({email: email, password:password, firstname:firstname, lastname:lastname, classs:classs, isAdmin: false, isLoggedIn: true});
+        newUser.save(function (err) {
+            if (err) return handleError(err);
+        });
+        console.log("hola")
+        return newUser.id;
+    });
+}
+
+function returnUserID(mail, query)
+{
+    mongoose.connect("mongodb://localhost");
+    var db = mongoose.connection;
+    db.on('error', console.error.bind(console, 'connection error:'));
+    db.once('open', function() 
+    {
+        var user = mongoose.model('user', usersSchema);
+        user.findOne({ email : query }), returnField, function(err, found)
+        {
+            if (err) return handleError(err);
+            return found.id;
+        }
+    });
 }
 
 http.createServer(function (req, res) {
@@ -74,8 +133,35 @@ http.createServer(function (req, res) {
             }
         });
     }
-    else if (req.method === 'POST')
+    
+    if (req.method === 'POST')
     {
-        
+        var body = "";
+        req.on("data", function (chunk) {
+            body += chunk;
+            console.log(chunk)
+        });
+        req.on("end", function(){
+            if (req.url === '/signup.html')
+            {
+                var data = qs.parse(body);
+                var id = registerNewUser(data.email, data.password, data.firstname, data.lastname, data.classs);
+                res.writeHead(201, { "Content-Type": "text/plain" });
+                res.end("id=" + id);
+            }
+            if (req.url === '/signin.html')
+            {
+                var data = qs.parse(body);
+                res.writeHead(201, { "Content-Type": "text/plain" });
+                res.end(true);
+            }
+            if (req.url === '/writeSicum.html')
+            {
+                res.writeHead(200, {"Content-Type": "text/html"});
+                res.end()
+            }
+            res.writeHead(404, { "Content-Type": "text/html" });
+            res.end("whaaaaaaaaaaat the fuck did you even do to get this error");
+        });
     }
 }).listen(8080);

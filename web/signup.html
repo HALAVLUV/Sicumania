@@ -10,7 +10,7 @@
 		<!--<form action="/echo" method="post">-->
 		<div id="div1">
 			<input type="text" id="firstname" placeholder="שם פרטי" />
-	        <input type="text" id="lastname" placeholder="שם משפחה" />
+	      <input type="text" id="lastname" placeholder="שם משפחה" />
 			<input type="email" id="email" placeholder="דואר אלקטרוני" />
 			<input type="password" id="password" placeholder="סיסמה" />
 			<input type="text" id="class" placeholder="כיתה" />
@@ -21,18 +21,23 @@
 	  <script>
 		$("#submitter").click(function(){
 			$.ajax({
-			url: "/echo",
-			data: { fname: $("#firstname").val(),
-							lname: $("#lastname").val(),
-			 				email: $("#email").val(),
-							password: $("#password").val(), 
-							cls: $("#class").val() },
+			url: "/signup.html",
+			method: "POST",
+			data: { email: $("#email").val(),
+							password: $("#password").val(),
+							firstname: $("#firstname").val(),
+							lastname: $("#lastname").val(),
+							classs: $("#class").val() },
 			success: function(result){
-				$("#div1").html(result);
+				var d = new Date();
+    		d.setTime(d.getTime() + (7*24*60*60*1000));
+    		var expires = "expires="+ d.toUTCString();
+				document.cookie= "userid="+result +";" + expires + ";path=sicumPage.html";
+				window.location = "sicumPage.html";
 			},
 			error: function(){
 				alert("mooo");
-			}
+			},
 			});
 		});
 	  </script>
