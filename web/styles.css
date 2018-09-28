@@ -9,21 +9,25 @@ body {
 }
 
 h1 {
-  font-size: 50px;
+  font-size: 80px;
   position: relative;
   top: 200px;
+  text-shadow: 4px 4px 10px black;
 }
 
 p {
-  font-size: 22px;
+  font-size: 40px;
   position: relative;
   top: 220px;
 }
 
 a {
-  font-size: 20px;
+  font-size: 50px;
   position: relative;
   top: 350px;
+  text-decoration: none;
+  margin: 50px;
+  color: black;
 }
 
 input {

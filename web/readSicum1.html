@@ -1,0 +1,447 @@
+<htmllang="he">
+	<head>
+			<title>סיכומאניה</title>
+			<meta charset="utf-8"/>
+			<link rel="stylesheet" href="sicumaniaStyles2.css">
+	</head>
+	<body>
+	<p>
+הסבר על נתב ראוטר – Router והסבר על ניתוב סטטי Static Route
+by Tal Ben Shushan 16/07/2016 0 comment
+ הסבר על נתב ראוטר  – Router והסבר על ניתוב סטטי Static Route
+הסבר על נתב,ראוטר \ Router והגדרת ניתוב
+Untitled-1
+
+כידוע לנו ב IPv4 אנחנו בעצם מחלקים את הכתובות לרשתות לדוגמה 192.168.1.0/24 ורשת 192.168.2.0/24 הן 2 רשתות שונות לחלוטין.
+
+זאת אומרת שאם אני אגדיר את מחשב 9 בכתובת 192.168.1.10/24 ואת מחשב 8 בכתובת 192.168.2.10/24 כמו בתמונה
+
+1
+
+ואני ארצה שהם ישלחו הודעה בינהם, האם ההודעה תגיע? לא…. כי רשת אחת לא יכולה לדבר עם רשת האחרת וזה חוק ברזל
+
+על מנת ששני המחשבים האלו יוכלו לדבר אחד עם השני אנו נצטרך להכניס ראוטר בינהם, כך:
+
+r2
+
+בשיטה זו 2 הרשתות נמצאים מצדי הראוטר ועל ידי הראוטר הם יוכלו לדבר, אך הם ידברו? על ידי טבלת IP Route Table בטבלה זו ניתן יהיה לראות רשימה של כל הפורטים ואיזה רשת נמצאת מבעד לאותו פורט
+
+לדוגמה, אם נסתכל בתרשים, נוכל לראות שPC9 נמצא בצד ימין, נאמר שהרשת בצד ימין היא 192.168.1.0/24 והרשת בצד שמאל של מחשב PC8 זו רשת 192.168.2.0/24 אז נוכל לראות בראוטר בטבלת הניתוב שלו את הרשתות שמחוברות לאותו הפורט
+
+סוגי ניתוב סטטי
+Static Route
+הוא ניתוב הרגיל שאתם מכירים, כאשר יש לנו רשת כמו בדוגמה הזו:
+
+1
+
+ניתן לראות שבין רשת 192.168.1.0 לבין רשת 192.168.2.0 יש רשת נוספת באמצע רשת 172.16.1.0/30, עכשיו תארו לכם ש Packet מעוניין להגיע ממחשב PC1 שכתובת ה IP שלו היא 192.168.1.10 למחשב PC0 שכתובתו 192.168.2.10, עליהם לעבור דרך רשת 172.16.1.0/30, הבעיה שברגע שה Packet יגיע לRouter2, Router2 לא ידע לאיזה פורט להוציא את ה Packet כיוון שמעולם לא שמע ואינו יודע איפה נמצאת רשת זו.
+על מנת להגדיר ל Router2 איפה הרשת הזו עלינו להשתמש ב Static Route (או כל פרוטוקול ניתוב, אך כרגע אנו מסבירים על Static Route) כיצד זה יראה?
+
+Router2>Enable
+
+Router2#Configure Terminal
+
+Router2(config)#ip route 192.168.1.0 255.255.255.0 172.16.1.1
+
+גם את הפקודה הזו נפרק על מנת להבין מה היא עושה:
+
+IP Route – הפקודה שמתחילה ניתוב סטטי
+
+192.168.2.0 – אנחנו אומרים לראוטר את הרשת שעליו ללמוד, רשת זו היא כמובן 192.168.2.0, אתם בטח שואלים מה עם רשת 172.16.1.0/30? רשת זו מחוברת ישירות (Directly Connected) ל Router2 ולכן לא צריך להגיד לו על רשת זו
+
+255.255.255.0 –ה Subnet Mask של רשת 192.168.2.0 שהיא Prefix של 24/
+
+172.16.1.1 – על מנת להגיע לרשת 192.168.2.0 שכרגע רשמתי לך, עליך לעבור דרך כתובת 172.16.1.1, ניתן לראות שכתובת זו משוייכת ל Router0 בפורט G0/0.
+
+Default Static Route
+תארו לכם מצב בו מגיע Packet אל הראוטר, וה Destination IP בPacket לא נמצא בטבלת הניתוב של הראוטר, מה יעשה אז הראוטר? ישמיט את ה Packet? לא… למעשה יכול להיות שהחבילה מיועדת למחשב ברשת העולמית ולא בתוך הארגון ולכן הוא לא מכיר את הIP הזה ויעביר את זה ל Default Route
+
+על מנת להבין זאת יותר טוב קודם כל אני אציג לכם את הפקודה ואז אסביר בדיוק:
+
+Router2>Enable
+
+Router2#Configure Terminal
+
+Router2(config)#ip route 0.0.0.0 0.0.0.0 171.171.171.10
+
+הכתובת 0.0.0.0 עם Subnet Mask של 0.0.0.0 זה למעשה אומר לראוטר, כל חבילה שמגיע עם כל כתובת לא מוכרת העבר ל 171.171.171.10.
+
+Summary Static Route
+תארו לכם מצב בו יש לנו 2 רשתות 172.20.0.0/16 ורשת נוספת 172.21.0.0/16 הראוטר יכול בעצם ל”כווץ” את הרשתות האלו ל 172.20.0.0/14, על ידי כך הוא מכניס את כל הרשתות הבאות ל 172.20.0.0/14
+
+172.20.0.0/16
+172.21.0.0/16
+172.22.0.0/16
+172.23.0.0/16
+
+לתוך
+
+172.20.0.0/14
+
+על מנת לבצע זאת, חייבים לעמוד ב2 קריטריונים:
+
+ניתן להכניס את הרשתות לתוך Subnet Mask קטן יותר של רשתות
+כל הרשתות הללו נמצאות מאחורי אותו הפורט
+ניתן לבטל את ה Auto Summary כאשר יש להקיש
+
+no auto-summary
+
+דוגמה:
+
+
+
+כעת נבדוק את Router5, ונראה את טבלת הניתוב שלו (נתייחס רק לחלק שאותו אני מסביר)
+
+S 172.20.0.0/16 [1/0] via 10.10.10.1
+
+S 172.21.0.0/16 [1/0] via 10.10.10.1
+
+כעת נכנס ל Router5 ונבטל את 2 הניתובים הללו ונגדיר בעצמו את הניתוב 172.20.0.0/14 ונראה אם הכל עובד
+
+Router(config)#no ip route 172.20.0.0 255.255.0.0 10.10.10.1
+
+Router(config)#no ip route 172.21.0.0 255.255.0.0 10.10.10.1
+
+Router(config)#ip route 172.20.0.0 255.252.0.0 10.10.10.1
+
+כעת אם תבדקו תראו שהניתובים שיצרנו עדיין עובדים וחבילות מגיעות ליעדן
+
+Floating Static Route
+פיצ’ר זה אומר שניתן ליצור 2 ניתובים סטטיים לאותו היעד דרך יציאות שונות בראוטר, כך שאם חיבור אחד נפל יוכל הראוטר להעביר את החבילה דרך הנתיב השני.
+
+יכול להיות מצב בו 2 החיבורים הם באותו המהירות \ אמינות וכו’ אבל אתם צריכים לבחור באיזה דרך הוא תמיד יבחר ואיזה דרך תהיה הגיבוי שלו, מגדירים ניתוב אחד סטטי ואת הניתוב הסטטי השני משנים לו את ה Administative Distance (ניתן לקרוא באתר בהרחבה על AD) וכך רק כאשר החיבור הראשי לנתיב נופל אז הראוטר ישתמש במשני.
+יוצרים נתיב סטטי אחד ונתיב שני על ידי פרוטוקול ניתוב אחר למשל OSPF שה AD שלו הוא 110 שכן הAD של סטטי הוא 1 ולכן רק כאשר הניתוב הסטטי יפול אז הניתוב של OSPF יעבוד!
+לא חייב להשתמש בפרוטוקול ניתוב אחר אבל בצורה זו אתם לא צריכים להחליט על ה AD
+
+ניתן להגדיר ידנית כך:
+
+Router(config)#ip route 0.0.0.0 0.0.0.0 80.45.20.1
+
+Router(config)#ip route 0.0.0.0 0.0.0.0 80.45.20.88 4
+
+סימנתי לכם באדום את המספר 4 זה הAD שהוגדר לנתיב זה, כמו שלמדתם זה ה Default Route אז הגדרתי שכאשר הראוטר שולח Packet (כנראה לעולם) הוא ישלח דרך 80.45.20.1 ורק אם נתיב זה לא יעבוד אז דרך 80.45.20.88
+
+Fully Specified Static Route
+הסבר למונח זה הוא דיי פשוט, כאשר אנחנו מגדירים נתיב סטטי, אנחנו יכולים לרשום גם את הפורט שהוא אמור לצאת ממנו הראוטר עצמו כך:
+
+Router2(config)#ip route 192.168.1.0 255.255.255.0  172.16.1.1
+
+ניתן לראות בשרטוט שRouter2 , על מנת שידע להגיע לרשת 192.168.1.0 הוא צריך לצאת דרך IP 172.16.1.1 (בדיוק כמו שרשום למעלה) אבל אנחנו יכולים להוסיף לו גם את הפורט של אותו הראוטר (שוב של אותו הראוטר לא של הראוטר השני ששם כן הגדרנו את כתובת ה IP של הראוטר השני)
+
+Router2(config)#ip route 192.168.1.0 255.255.255.0 G0/1  172.16.1.1
+
+
+
+שימוש בטבלת ה ARP לאורך הניתוב ברשת
+
+
+כאשר מחשב PC0 מעוניין לשלוח הודעה למחשב PC1 שנמצא ברשת אחרת הוא מכניס ל Destination IP שלו את ה IP של היעד אבל את ה MAC Address Destination הוא מכניס של ה Router, בגלל שאותו מחשב לא באותה רשת שלו, אין לPC0 את ה MAC Address ולכן הוא מכניס את ה MAC Address של ה Default Gateway שלו (שהוא הפורט בראוטר)
+
+מחשב PC0 | כתובת IP: 192.168.2.10 | כתובת ה MAC  של כרטיס הרשת 000A.F38D.B49B של PC0 (יציאה Fa0/0 בתמונה בצד הכי ימני)
+מחשב PC1 | כתובת IP: 192.168.1.10 כתובת ה MAC  של כרטיס הרשת  0090.2111.9BA5 של PC0 (יציאה Fa0/0 בתמונה בצד הכי שמאלי)
+
+עכשיו תארו לכם Packet יוצא ממחשב PC0 למחשב PC1
+
+Source IP: 192.168.2.10
+Destination IP: 192.168.1.10
+Source MAC: 000A.F38D.B49B
+Destination MAC: 0090.2111.9BA5
+
+הכל נכון, חוץ מהאחרון הDestination MAC: 0090.2111.9BA5 הייתם רוצים לחשוב ששם אנחנו שמים את ה Destination MAC של PC0, אבל מחשב PC0 אינו יודע את ה MAC של מחשב PC1 (תקראו באתר בהרחבה על ARP ותבינו שARP במחשב שולח רק MAC מאותה הרשת) הPacket האמיתי יראה כך:
+
+Source IP: 192.168.2.10
+Destination IP: 192.168.2.10
+Source MAC: 000A.F38D.B49B
+Destination MAC: 000B.BEEE.9A01
+
+אתם בטח שואלים את עצמכם, מזה הMAC הזה ומאיפה הוא הגיע? ובכן הוא הפורט G0/0 של Router1 בשרטוט, כן כן ה MAC הזה הוא של ה Default Gateway של רשת 192.168.1.0: הנה תראו בעצמכם
+הקשתי את הפקודה Show ARP בRouter1 על מנת לראות את הפורטים שלו והMAC Address שהוא גילה בARP
+
+ 
+
+ 
+
+Router1#show arp
+
+Protocol Address Age (min) Hardware Addr Type Interface
+
+Internet 10.1.1.1 2 0004.9ACE.3201 ARPA GigabitEthernet0/1
+
+Internet 10.1.1.2 – 000B.BEEE.9A02 ARPA GigabitEthernet0/1
+
+Internet 192.168.2.1 – 000B.BEEE.9A01 ARPA GigabitEthernet0/0
+
+Internet 192.168.2.10 1 000A.F38D.B49B ARPA GigabitEthernet0/0
+
+סימנתי לכם בכתום, את ה Default Gateway של Router1 ואת ה MAC שלו של פורט G0/0 ובו ניתן לראות שזהו הMAC שהוא הכניס, כאשר Packet זה יגיע לראוטר הבא Router2 יתחיל תהליך ה De-Encapsulating ואז Encapsulating ל Layer3 אבל אך זה בדיוק נראה?
+
+כעת החבילה הגיע ל Router1 והוא צריך להחליט על ניתוב הדרוש בדרך ל PC1 אז הוא יבצע Encalsulating ויגדיר את ה MAC Address  של Router3 והוא הMAC של פורט G/0/0 :
+
+Router2#show arp
+
+Protocol Address Age (min) Hardware Addr Type Interface
+
+Internet 10.1.1.1 – 0004.9ACE.3201 ARPA GigabitEthernet0/0
+
+Internet 10.1.1.2 0 000B.BEEE.9A02 ARPA GigabitEthernet0/0
+
+Internet 172.16.1.1 0 0007.ECC4.C301 ARPA GigabitEthernet0/1
+
+Internet 172.16.1.2 – 0004.9ACE.3202 ARPA GigabitEthernet0/1
+
+כעת ה Packet תוגדר כך:
+
+Source IP: 192.168.2.10
+
+Destination IP: 192.168.2.10
+
+Source MAC: 000A.F38D.B49B
+
+Destination MAC: 0004.9ACE.3201
+
+Destination MAC: 0004.9ACE.3202
+
+אני חושב שהבנתם את הרעיון ולכן נמשיך ישיר ל Router3 שם יקרה הדבר שאמור להיות ברור:
+
+הPacket יגיע ל Router3 ואז הוא יבדוק מה MAC Address שהוא גילה על ידי ARP
+
+Router3#show arp
+
+Protocol Address Age (min) Hardware Addr Type Interface
+
+Internet 172.16.1.1 – 0007.ECC4.C301 ARPA GigabitEthernet0/0
+
+Internet 172.16.1.2 5 0004.9ACE.3202 ARPA GigabitEthernet0/0
+
+Internet 192.168.1.1 – 0007.ECC4.C302 ARPA GigabitEthernet0/1
+
+Internet 192.168.1.10 5 0090.2111.9BA5 ARPA GigabitEthernet0/1
+
+כעת החבילה נמצאת ב Router3 ושהוא מברר את ה Destination IP שהוא 192.168.1.10 הוא מגלה שה MAC שרשום לו הוא 0090.2111.9BA5 אז הוא משנה את ה Packet לצורה הבאה
+
+
+ 
+Source IP: 192.168.2.10
+
+Destination IP: 192.168.2.10
+
+Source MAC: 000A.F38D.B49B
+
+Destination MAC: 0090.2111.9BA5
+
+וזהו, כעת כל היעדים מדויקים ה MAC של PC1 והIP שלו והחבילה תגיע ליעדה, כמובן שלכל הדרך מבוצע Encapsulating  ו De-Encapsulating
+
+Encapsulating and De-Encapsulating Packets
+אז כיצד ראוטר מעביר Packet שהוא קיבל בפורט מסוים לפורט אחר בראוטר?
+1. הוא מבצע De-Encapsulating לFrame Data על מנת לחשוף את ה Layer 3 packet
+2. הוא בוחן את שדה ה Destination IP על מנת למצוא את הנתיב הכי טוב ליעד
+3. אם הוא מצא נתיב, הוא מבצע Encapsulating מחדש לFrame Layer 2 ובו ה Source וה Destination MAC Address, ואז הוא שולח אותה דרך הפורט המתאים בטבלת הניתוב
+4.חשוב לדעת! ישנם סוגים שונים של Encapsulating לדוגמה כאשר מדובר ברשת רגילה אז כאשר שלב 3 מתרחש, הוא באמת מבצע Encapsulating ל Packet בחזרה ל Frame עם ה Dest + Source MAC Address
+אבל במקרה שהחיבור בין ראוטר לראוטר הוא Serial Interface אין צורך שיהיה בתוך ה Frame ה Dest + Source MAC Address ולכן ה Encapsulating ל Layer 2 מתרחש ללא ה Dest + Source MAC Address
+
+Packet Forward
+ראוטרים משתמשים ב3 טכניקות להעברת Packet בינהם:
+
+Process Switching – כאשר Packet מגיע לראוטר, הוא עובר לבדיקה של ה CPU שם הוא נפתח והCPU בודק מה היעד שלו, לאחר שהוא בודק את כתובת הIP של היעד, הוא בודק בטבלת הניתוב שלו לאיזה פורט לשלוח את ה Packet שלו ואז שולח את ה Packet, הבעיה היא שכל Packet שמגיע הוא בודק באותה הדרך, גם אם יש רצף של Packets לאותה הדרך הוא יפתח One By One וזה שיטה איטית
+*שיטה זו כמעט ואינה נמצאת בראוטרים של ימנו
+
+Fast Switching – כאשר Packet מגיע לראוטר הוא עובר לבדיקה של ה CPU, אבל כאן יש Cache שמאחסן את הנתיבים שPacket ישנים יותר עברו, כך ברגע שמגיע Pakcet והוא הראשון אז הCPU יבדוק אותו ויאחסן את המידע של הנתיב שלו ב Cache ואז כל הרצף של ה Packets הבאים יהיה מהיר יותר.
+
+CEF – Cisco Express Forwarding – היא השיטה החדשה ביותר של סיסקו להעברת Packet בתוך הראוטר, בשיטה זו הוא בונה טבלה בשם FIB וטבלת “חברויות” של ראוטרים אחרים שמחוברים אחד לשני, כך גם אם יש שינוי ברשת, הוא משנה את זה בטבלה שלו וכאשר Packet מגיע הוא יודע ישר לאיזה יציאה לשלוח אותו גם אם היציאה השתנתה.
+
+ניתן לראות שהוא מכיר את רשתות 192.168.1.0 ואת 192.168.2.0 על ידי כך שהם מחוברים אליו ישירות ולכן יש האות C לידם והאות L שהם לוקאליים (תוכלו לראות את ההסבר לכל אות למעלה)
+
+מעבדה א – Static Route
+להורדת המעבדה
+
+
+כעת בואו נגדיר Static Route
+
+נבנה את הרשת כך:
+
+1
+
+ניתן לראות שמצד ימין את רשת 192.168.1.0 ומצד שמאל את רשת 192.168.2.0 אבל באמצע יש רשת 172.16.1.0/30 שכן ראוטר0 לא מכיר את הרשת שמעבר לראוטר2
+
+לכן אנחנו צריכים להגדיר לו Static Route Z זאת אומרת להגיד לראוטר0 שמעבר ל Interface 0/0 שלו יש רשת 192.168.1.0
+
+ניכנס לRouter0
+
+נגדיר בדיוק כמו בתמונה את הפורטים לפי הרשתות שרשמתי:
+
+Router#conf t
+
+Router(config)#interface g0/0
+
+Router(config-if)#ip address 172.16.1.1 255.255.255.252
+
+Router(config-if)#no shutdown
+
+Router(config-if)#exit
+
+Router(config)#interface g0/1
+
+Router(config-if)#ip address 192.168.2.1 255.255.255.0 
+
+Router(config-if)#No Shutdown
+
+Router(config-if)#exit
+
+עכשיו! אנחנו בעצם מבצעים Static Route אנחנו אומרים לו שעל מנת להגיע לרשת 192.168.1.0 עליך להגיע לכתובת הIP (הקפיצה הבאה שלך על מנת להגיע לרשת 192.168.1.0) היא 172.16.1.2
+
+ניתן לראות בתרשים שזה הפורט שמחובר לRouter2 שכן כעת אנחנו נמצאים ב Router0
+
+Router(config)#ip route 192.168.1.0 255.255.255.0 172.16.1.2
+
+Router#configure t
+
+Router(config)#interface g0/1
+
+Router(config-if)#ip address 192.168.1.1 255.255.255.0
+
+Router(config-if)#no shutdown
+
+Router(config-if)#exit
+
+Router(config)#interface g0/0
+
+Router(config-if)#ip address 172.16.1.2 255.255.255.252
+
+Router(config-if)#no shutdown
+
+עכשיו! אנחנו בעצם מבצעים Static Route אנחנו אומרים לו שעל מנת להגיע לרשת 192.168.2.0 עליך להגיע לכתובת הIP (הקפיצה הבאה שלך על מנת להגיע לרשת 192.168.2.0) היא 172.16.1.1
+
+ניתן לראות בתרשים שזה הפורט שמחובר לRouter0 שכן כעת אנחנו נמצאים ב Router2
+
+Router(config)#ip route 192.168.2.0 255.255.255.0 172.16.1.1
+
+עכשיו בואו נסתכל בטבלת הניתוב לדוגמה של Router2
+
+Router#show ip route
+
+Codes: L – local, C – connected, S – static, R – RIP, M – mobile, B – BGP
+
+D – EIGRP, EX – EIGRP external, O – OSPF, IA – OSPF inter area
+
+N1 – OSPF NSSA external type 1, N2 – OSPF NSSA external type 2
+
+E1 – OSPF external type 1, E2 – OSPF external type 2, E – EGP
+
+i – IS-IS, L1 – IS-IS level-1, L2 – IS-IS level-2, ia – IS-IS inter area
+
+* – candidate default, U – per-user static route, o – ODR
+
+P – periodic downloaded static route
+
+Gateway of last resort is not set
+
+172.16.0.0/16 is variably subnetted, 2 subnets, 2 masks
+
+C 172.16.1.0/30 is directly connected, GigabitEthernet0/0
+
+L 172.16.1.2/32 is directly connected, GigabitEthernet0/0
+
+192.168.1.0/24 is variably subnetted, 2 subnets, 2 masks
+
+C 192.168.1.0/24 is directly connected, GigabitEthernet0/1
+
+L 192.168.1.1/32 is directly connected, GigabitEthernet0/1
+
+S 192.168.2.0/24 [1/0] via 172.16.1.1
+
+ניתן לראות שיש לנו S לפני הרשת 192.168.2.0 ואפילו הוא רושם לנו דרך איזה כתובת IP הוא מגיע אל הרשת הזו הS כמובן מסמל Static שכן זהו ניתוב סטטי
+
+כעת נבצע בדיקה של שליחה
+
+2
+
+להורדת המעבדה (מוכנה)
+
+
+מעבדה ב – Directly Connected Networks
+להורדת המעבדה
+
+
+
+אז בואו נגדיר את הפורט ותוכלו לראות אך בדיוק זה עובד..
+
+דבר ראשון שאנחנו צריכים להגדיר לראוטר זה שהיציאה 0/1 היא רשת 192.168.1.0, אז אך עושים את זה? מגדירים את ה Default Gateway שלנו במחשבים שאנו רוצים, נאמר החלטתי שה Default Gateway של המחשב PC9 הוא 192.168.1.1/24
+
+pc9
+
+עכשיו נלך לראוטר ונגדיר לו שהיציאה 0/1 היא למעשה 192.168.1.1 כך, שברגע שהמחשב ירצה לשלוח הודעה וההודעה ממוענת לכתובת IP שאינה נמצאת ב Subnet שלו לדוגמה הוא מעוניין לשלוח הודעה ל 192.168.10.50
+
+המחשב ידע לשלוח את ההודעה ישר ל Default Gateway שלו שהוא 192.168.1.1 ושם ייאלץ הראוטר לבדוק אם הוא מכיר את הרשת הזו, אם אינו מכיר ההודעה תיפול ולא תעבור…
+
+עכשיו נבצע את אותו דבר במחשב PC8 רק שהפעם הרשת היא 192.168.2.0 וה Default Gateway הוא 192.168.2.1
+
+ 
+
+pc8
+
+ 
+
+כעת נגדיר נכנס לראוטר ונכנס ל Interface 0/1 ואז נגדיר לו שהכתובת של יציאה זו היא 192.168.1.1
+
+Router#conf t
+
+Router(config)#interface gigabitEthernet 0/1
+
+Router(config-if)#ip address 192.168.1.1 255.255.255.0
+
+Router(config-if)#no shutdown
+
+כעת ניכנס ל Interface 0/0 ונגדיר לו שהIP שלו הוא 192.168.2.1
+
+Router#conf t
+
+Router(config)#interface gigabitEthernet 0/0
+
+Router(config-if)#ip address 192.168.2.1 255.255.255.0
+
+Router(config-if)#no shutdown
+
+כעת נשלח הודעה ממחשב 8 ל9 והפוך
+
+עד כה, ביצענו ניתוב דיי פשוט אבל מה קורה הרשת יותר גדולה? עם יותר ראוטרים?
+
+אנחנו נאלץ לבצע ניתוב סטטי על מנת לומר לראוטר איזה רשתות נמצאים מעבר לרשתות שהוא מכיר.
+
+נסתכל על התרשים הבא
+
+
+
+נוכל לראות שיש רשת 192.168.3.0/24 שנמצאת במקום בו Router 1 אינו מכיר, ולכן אינו יודע על הקיום של רשת זו ולכן נצטרך להגדיר Static Route
+
+לפני זה נלך לRouter1 ונבדוק מה יש בטבלת ה Route שלו
+
+Router# show ip route
+
+Codes: L – local, C – connected, S – static, R – RIP, M – mobile, B – BGP
+
+D – EIGRP, EX – EIGRP external, O – OSPF, IA – OSPF inter area
+
+N1 – OSPF NSSA external type 1, N2 – OSPF NSSA external type 2
+
+E1 – OSPF external type 1, E2 – OSPF external type 2, E – EGP
+
+i – IS-IS, L1 – IS-IS level-1, L2 – IS-IS level-2, ia – IS-IS inter area
+
+* – candidate default, U – per-user static route, o – ODR
+
+P – periodic downloaded static route
+
+Gateway of last resort is not set
+
+192.168.1.0/24 is variably subnetted, 2 subnets, 2 masks
+
+C 192.168.1.0/24 is directly connected, GigabitEthernet0/1
+
+L 192.168.1.1/32 is directly connected, GigabitEthernet0/1
+
+192.168.2.0/24 is variably subnetted, 2 subnets, 2 masks
+
+C 192.168.2.0/24 is directly connected, GigabitEthernet0/0
+
+L 192.168.2.1/32 is directly connected, GigabitEthernet0/0 </p>
+</body>
