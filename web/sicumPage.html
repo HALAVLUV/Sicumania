@@ -1,34 +1,66 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html>	  
+<html lang="he">
 	<head>
-	<style>
-	table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-}type="text/css">
-    body {
-      direction: rtl;
-    }
-	</style>
-	  <title>סיכומניה</title>
-	  <link rel="stylesheet" href="styles.css">
+			<title>סיכומאניה</title>
+			<meta charset="utf-8"/>
+			<link rel="stylesheet" href="sicumaniaStyles2.css">
 	</head>
-	<body background="notebook.jpg">
-	  <h1>סיכומניה</h1>
+	<body background="notebook.jpg" dir="rtl">
+	  <h1>סיכומאניה</h1>
 	  <p id="p1">מצא סיכום שמעניין אותך</p>
-	  <table style="width:100%">
-  <tr>
-    <th>נושא הסיכום</th> 
-    <th>שם הסיכום</th>
-	<th>צפייה</th>
-	<th>עריכה</th>
-  </tr>
-  <tr>
-    <th>רשתות</th> 
-    <th>ראוטרים</th>
-	<th><button type="button">צפה בסיכום</button></th>
-	<th><button type="button">ערוך את הסיכום</button></th>
-  </tr>
-</table>
+	  <table>
+        <tr>
+            <th>נושא הסיכום</th> 
+            <th>שם הסיכום</th>
+            <th>צפייה</th>
+            <th>עריכה</th>
+        </tr>
+        <tr>
+            <th>רשתות</th> 
+            <th>ראוטרים</th>
+            <th><a href="readSicum.html" onclick="makeCoockie(networks, r)">צפה בסיכום</a></th>
+            <th><a href="writeSicum.html" onclick="makeCoockie(networks, w)">ערוך את הסיכום</a></th>
+        </tr>
+        <tr>
+            <th>היסטוריה</th> 
+            <th>מלחמת העולם השנייה</th>
+            <th><a href="readSicum.html" onclick="makeCoockie(history, r)">צפה בסיכום</a></th>
+            <th><a href="writeSicum.html" onclick="makeCoockie(history, w)">ערוך את הסיכום</a></th>
+        </tr>
+        <tr>
+            <th>לשון</th> 
+            <th>תחביר</th>
+            <th><a href="readSicum.html" onclick="makeCoockie(hebrew, r)">צפה בסיכום</a></th>
+            <th><a href="writeSicum.html" onclick="makeCoockie(hebrew, w)">ערוך את הסיכום</a></th>
+        </tr>
+      </table>
+      <script>
+            var name = userid + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for(var i = 0; i <ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    document.getElementById("p1").innerHTML = substring(name.length, c.length);
+                }
+                }
+            function makeCoockie(subject, state){
+                var d = new Date();
+    		    d.setTime(d.getTime() + (7*24*60*60*1000));
+                var expires = "expires="+ d.toUTCString();
+                var newpage;
+                if (state == 'r'){
+                    newpage= "readSicum.html";
+                }
+                else{
+                    newpage = "writeSicum.html";
+                }
+                var path = "path=" + newpage;
+				document.cookie= "subject="+subject +";" + expires + ";" + path;
+            }
+        </script>
 	</body>
 </html>

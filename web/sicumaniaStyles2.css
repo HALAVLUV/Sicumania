@@ -25,5 +25,15 @@ input {
 button {
     font-size: 18px;
     position: relative;
-    top: 350px;
+    
+}
+
+tr, th {
+    padding: 20px;
+    border: 2px solid black;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
 }

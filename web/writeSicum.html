@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="he">
+	<head>
+	  <meta charset="utf-8"/>
+	  <title>סיכומאניה</title>
+	  <link rel="stylesheet" href="styles.css">
+	</head>
+	<body background="notebook.jpg" dir="rtl">
+			<div id="div1">
+			<input type="text" id="content" placeholder="רשום סיכום" rows="8" cols="50" />
+				<input type="button" id="submitter" text="רשום טקסט" style="height:50px;width:200px">
+			</div>
+			<script src="jquery-3.3.1.min.js"></script>
+			<script>
+				$("#submitter").click(function(){
+					$.ajax({
+					url: "/writeSicum.html",
+					method: "POST",
+					data: { content: $("#content").val(), 
+							topic: $("sceince").val(),
+							name: $("enstinn").val() },
+					success: function(result){
+						var d = new Date();
+					d.setTime(d.getTime() + (7*24*60*60*1000));
+					var expires = "expires="+ d.toUTCString();
+							document.cookie= "userid="+result +";" + expires + ";path=sicumPage.html";
+							window.location = "sicumPage.html";
+					},
+					error: function(){
+						alert("mooo2");
+					},
+					});
+				});
+	  </script>
+	</body>
+</html>
