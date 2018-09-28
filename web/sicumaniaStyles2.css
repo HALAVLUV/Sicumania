@@ -1,6 +1,7 @@
 h1 {
     font-size: 50px;
     position: relative;
+    top: 75px;
 }
 
 body {
@@ -9,11 +10,14 @@ body {
     background-position: center;
     color: black;
     font-family: tahoma;
+    background-repeat: no-repeat;
+    background-position: right top;
 }
 
 p {
     font-size: 22px;
     position: relative;
+    top: 100px;
 }
 
 input {
@@ -25,15 +29,19 @@ input {
 button {
     font-size: 18px;
     position: relative;
-    
+
 }
 
-tr, th {
+tr,
+th {
     padding: 20px;
     border: 2px solid black;
 }
 
 table {
     border-collapse: collapse;
-    width: 100%;
+    width: 50%;
+    position: relative;
+    right: 480px;
+    top: 200px;
 }

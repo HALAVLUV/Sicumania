@@ -13,6 +13,7 @@ var usersSchema = new Schema({
   firstname: String,
   lastname: String,
   classs: String,
+  balance: Number,
   isAdmin: Boolean,
   isLoggedIn: Boolean
 });
@@ -157,8 +158,10 @@ http.createServer(function (req, res) {
             }
             if (req.url === '/writeSicum.html')
             {
+                var data = qs.parse(body);
+                writeSicums(data);
                 res.writeHead(200, {"Content-Type": "text/html"});
-                res.end()
+                res.end();
             }
             res.writeHead(404, { "Content-Type": "text/html" });
             res.end("whaaaaaaaaaaat the fuck did you even do to get this error");
